@@ -1,0 +1,24 @@
+ body {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+        }
+
+        .login-container {
+            max-width: 420px;
+            margin: 10% auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+         
+        

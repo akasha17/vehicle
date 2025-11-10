@@ -1,0 +1,89 @@
+ /* ---------- Colors & layout ---------- */
+    :root{
+      --sidebar-w: 260px;
+      --sidebar-bg: #191919;        /* dark left */
+      --sidebar-accent: #2b9ad1;    /* blue box on top of sidebar in screenshot (welcome area) */
+      --topbar: #07c57f;            /* green top bar */
+      --topbar-dark: #05905f;
+      --body-bg: #f2f2f2;
+      --card-bg: #ffffff;
+      --muted: #7a7a7a;
+      --radius: 6px;
+      --accent-green: #07c57f;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family: "Segoe UI", Roboto, Arial, sans-serif;background:var(--body-bg);color:#222;}
+    a{color:inherit;text-decoration:none}
+
+    /* ---------- Layout ---------- */
+    .wrap{display:flex;min-height:100vh}
+    .sidebar{
+      width:var(--sidebar-w);
+      background:var(--sidebar-bg);
+      color:#fff;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      overflow:hidden;
+    }
+    .sidebar .brand{
+      width:100%;
+      padding:18px 20px;
+      font-weight:800;
+      font-size:20px;
+      letter-spacing:1px;
+      background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.15));
+    }
+    .sidebar .welcome{
+      width:100%;
+      background: #3d7fb0; /* blue block under brand like screenshot */
+      padding:28px 20px;
+      color:white;
+      font-size:18px;
+    }
+    .nav{
+      width:100%;
+      padding:12px 0;
+    }
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 22px;
+      color:#ddd;
+      font-size:15px;
+    }
+    .nav a:hover{background:rgba(255,255,255,0.03);color:white}
+    .nav a.active{
+      background:var(--topbar);
+      color:white;
+      box-shadow: inset 4px 0 0 rgba(0,0,0,0.06);
+    }
+    .nav a .icon{width:20px;text-align:center;opacity:0.9}
+
+    /* ---------- Main area ---------- */
+    .main{flex:1;display:flex;flex-direction:column;min-height:100vh}
+    .topbar{height:64px;background:var(--topbar);display:flex;align-items:center;padding:0 28px;color:#fff;font-weight:700}
+    .content{padding:26px 36px;flex:1}
+    .page-title{font-size:28px;margin:6px 0 18px;color:#111;font-weight:700}
+
+    /* ---------- Card / table ---------- */
+    .card{background:var(--card-bg);border-radius:6px;padding:18px;border:1px solid #e9e9e9;}
+    .section-title{font-weight:700;color:#444;padding:10px 0;border-bottom:1px solid #e6e6e6;margin-bottom:12px}
+    .small-muted{color:var(--muted);font-size:13px}
+
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th, td{padding:12px 14px;border-bottom:1px solid #eee;text-align:left;vertical-align:middle}
+    th{background:transparent;color:#333;font-weight:700}
+    tr:hover td{background:rgba(6,197,127,0.02)}
+
+    .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:var(--topbar);color:#fff;font-weight:600}
+    .btn.outline{background:transparent;color:var(--topbar);border:1px solid var(--topbar)}
+    .right-col{width:360px}
+
+    /* responsive */
+    @media (max-width:980px){
+      .sidebar{display:none}
+      .content{padding:18px}
+      .right-col{width:100%}
+    }

@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Who Am I</title></head>
+  <body>
+    <h2>Who Am I</h2>
+    <p><strong>Username:</strong> {{ user_obj.username }}</p>
+    <p><strong>Role:</strong> {{ role|default:"(none)" }}</p>
+    <p><a href="{% url 'driver_dashboard' %}">Driver dashboard</a> | 
+       <a href="{% url 'staff_dashboard' %}">Staff dashboard</a> |
+       <a href="{% url 'admin_dashboard' %}">Admin dashboard</a></p>
+  </body>
+</html>

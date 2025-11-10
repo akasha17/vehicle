@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="{% static 'css/vehidetail.css' %}" rel="stylesheet">
+  <title>Vehicle – {{ vehicle.registration_no }}</title>
+</head>
+<body>
+
+  <div class="top-bar">
+    <h1>Vehicle: {{ vehicle.registration_no }}</h1>
+    <a href="{% url 'vehicle_list' %}" class="btn secondary">← Back to Vehicles</a>
+  </div>
+
+  <!-- Vehicle summary -->
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <div class="label">Registration No</div>
+        <div class="value">{{ vehicle.registration_no }}</div>
+      </div>
+      <div class="col">
+        <div class="label">Make / Model</div>
+        <div class="value">
+          {{ vehicle.make|default:"—" }} {{ vehicle.model|default:"" }}
+        </div>
+      </div>
+      <div class="col">
+        <div class="label">Year</div>
+        <div class="value">{{ vehicle.year|default:"—" }}</div>
+      </div>
+      <div class="col">
+        <div class="label">Status</div>
+        <div class="value">{{ vehicle.get_status_display }}</div>
+      </div>
+      <div class="col">
+        <div class="label">Driver</div>
+        <div class="value">{{ vehicle.current_driver.username|default:"—" }}</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      {% if request.user.is_superuser or request.user.profile.role == 'admin' or request.user.profile.role == 'staff' %}
+        <a href="{% url 'assign_vehicle' vehicle.id %}" class="btn secondary">Assign</a>
+        <a href="{% url 'edit_vehicle' vehicle.id %}" class="btn">Edit</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Maintenance -->
+    <div class="col">
+      <div class="card">
+        <h3 style="margin:0 0 10px">Recent Maintenance</h3>
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Description</th><th>Next Due</th></tr>
+          </thead>
+          <tbody>
+            {% for m in maintenance %}
+              <tr>
+                <td>{{ m.date }}</td>
+                <td>{{ m.description }}</td>
+                <td>{{ m.next_due|default:"—" }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="3" class="muted">No maintenance logs.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Fuel logs -->
+    <div class="col">
+      <div class="card">
+        <h3 style="margin:0 0 10px">Recent Fuel Logs</h3>
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Liters</th><th>Cost</th><th>Odometer</th></tr>
+          </thead>
+          <tbody>
+            {% for f in fuel_logs %}
+              <tr>
+                <td>{{ f.date }}</td>
+                <td>{{ f.liters }}</td>
+                <td>{{ f.cost }}</td>
+                <td>{{ f.odometer|default:"—" }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="muted">No fuel logs.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

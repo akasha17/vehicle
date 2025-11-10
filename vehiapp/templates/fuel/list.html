@@ -1,0 +1,48 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Fuel Logs - Vehicle Fleet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="{% static 'css/fuellist.css' %}" rel="stylesheet">
+</head>
+<body>
+
+  <h2>Fuel Logs</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Vehicle</th>
+        <th>Date</th>
+        <th>Liters</th>
+        <th>Cost</th>
+        <th>Odometer</th>
+        <th>Added By</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in items %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ f.vehicle.registration_no }}</td>
+          <td>{{ f.date }}</td>
+          <td>{{ f.liters }}</td>
+          <td>₹{{ f.cost }}</td>
+          <td>{{ f.odometer|default:"—" }}</td>
+          <td>{{ f.created_by.username|default:"—" }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7" class="muted">No fuel logs available.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{% url 'admin_dashboard' %}" class="btn-back">← Back to Dashboard</a>
+
+</body>
+</html>

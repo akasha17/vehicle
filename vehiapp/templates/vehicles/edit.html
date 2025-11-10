@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="{% static 'css/vehiedit.css' %}" rel="stylesheet">
+  <title>Edit Vehicle – {{ vehicle.registration_no }}</title>
+</head>
+<body>
+
+  <div class="top-bar">
+    <h1>Edit Vehicle: {{ vehicle.registration_no }}</h1>
+
+    <!-- back target: admin -> admin dashboard, staff -> staff dashboard -->
+    {% if request.user.profile.role == 'admin' %}
+      <a href="{% url 'vehicle_list' %}" class="btn secondary">← Back to Vehicles</a>
+    {% elif request.user.profile.role == 'staff' %}
+      <a href="{% url 'vehicle_list' %}" class="btn secondary">← Back to Vehicles</a>
+    {% endif %}
+  </div>
+
+  {% if messages %}
+    {% for m in messages %}<div class="alert">{{ m }}</div>{% endfor %}
+  {% endif %}
+
+  <div class="card">
+    <form method="post" action="">
+      {% csrf_token %}
+
+      <!-- If you're using a ModelForm named VehicleForm with fields:
+           registration_no, make, model, year, status, current_driver -->
+      <!-- Render manually for consistent styling -->
+      <div class="grid">
+        <div class="full">
+          <label for="id_registration_no">Registration Number</label>
+          {{ form.registration_no }}
+          {{ form.registration_no.errors }}
+        </div>
+
+        <div>
+          <label for="id_make">Make</label>
+          {{ form.make }}
+          {{ form.make.errors }}
+        </div>
+
+        <div>
+          <label for="id_model">Model</label>
+          {{ form.model }}
+          {{ form.model.errors }}
+        </div>
+
+        <div>
+          <label for="id_year">Year</label>
+          {{ form.year }}
+          {{ form.year.errors }}
+        </div>
+
+        <div>
+          <label for="id_status">Status</label>
+          {{ form.status }}
+          {{ form.status.errors }}
+        </div>
+
+        <div class="full">
+          <label for="id_current_driver">Assigned Driver</label>
+          {{ form.current_driver }}
+          <div class="helptext">Leave blank to keep the vehicle unassigned.</div>
+          {{ form.current_driver.errors }}
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn">Update Vehicle</button>
+        <a href="{% url 'vehicle_list' %}" class="btn secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

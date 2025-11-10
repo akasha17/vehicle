@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Maintenance Logs - Vehicle Fleet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="{% static 'css/mainlist.css' %}" rel="stylesheet">
+</head>
+<body>
+
+  <h2>Maintenance Logs</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Vehicle</th>
+        <th>Description</th>
+        <th>Date</th>
+        <th>Next Due</th>
+        <th>Added By</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in items %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ m.vehicle.registration_no }}</td>
+          <td>{{ m.description|default:"—" }}</td>
+          <td>{{ m.date }}</td>
+          <td>{{ m.next_due|default:"—" }}</td>
+          <td>{{ m.created_by.username|default:"—" }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" class="muted">No maintenance logs available.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{% url 'admin_dashboard' %}" class="btn-back">← Back to Dashboard</a>
+
+</body>
+</html>

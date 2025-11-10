@@ -1,0 +1,70 @@
+ body{
+      font-family: Inter, Arial, sans-serif;
+      background:#f3f4f6;
+      color:#111;
+      margin:0;
+      padding:30px;
+    }
+    .top-bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    }
+    h1{
+      font-size:22px;
+      margin:0;
+      color:#07c57f;
+    }
+    .btn{
+      background:#07c57f;
+      color:#fff;
+      border:none;
+      padding:8px 14px;
+      border-radius:6px;
+      cursor:pointer;
+      text-decoration:none;
+      font-weight:600;
+      display:inline-block;
+      transition:.2s;
+    }
+    .btn:hover{opacity:.9;}
+    .btn.secondary{
+      background:#fff;
+      color:#07c57f;
+      border:1px solid #07c57f;
+    }
+    .card{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,.05);
+      padding:20px;
+      max-width:600px;
+    }
+    form label{
+      display:block;
+      font-weight:600;
+      margin-bottom:4px;
+      margin-top:12px;
+    }
+    form select, form input{
+      width:100%;
+      padding:10px;
+      border:1px solid #ccc;
+      border-radius:8px;
+      font-size:14px;
+    }
+    .actions{
+      margin-top:16px;
+      display:flex;
+      gap:10px;
+    }
+    .alert{
+      background:#e7f9f0;
+      color:#0f5132;
+      border:1px solid #badbcc;
+      padding:10px 12px;
+      border-radius:8px;
+      margin-bottom:10px;
+    }

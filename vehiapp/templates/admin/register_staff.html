@@ -1,0 +1,65 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create Staff / Admin</title>
+  <link href="{% static 'css/registerstaff.css' %}" rel="stylesheet">
+</head>
+<body>
+  <div class="wrap">
+    <h2>Create Staff / Admin</h2>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+    {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+
+    <div class="form-card">
+      <form method="post" action="">
+        {% csrf_token %}
+        <div class="grid">
+          <div>
+            <label>Username</label>
+            <input type="text" name="username" placeholder="e.g. johndoe" required>
+          </div>
+          <div>
+            <label>Email</label>
+            <input type="email" name="email" placeholder="john@example.com">
+          </div>
+
+          <div>
+            <label>First Name</label>
+            <input type="text" name="first_name" placeholder="John">
+          </div>
+          <div>
+            <label>Last Name</label>
+            <input type="text" name="last_name" placeholder="Doe">
+          </div>
+
+          <div class="full">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+          </div>
+
+          <div class="full">
+            <label>Role</label>
+            <select name="role" required>
+              <option value="staff">Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn">Create User</button>
+          <a href="{% url 'admin_dashboard' %}" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

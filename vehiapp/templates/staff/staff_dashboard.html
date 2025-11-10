@@ -1,0 +1,188 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Staff Dashboard - Vehicle Fleet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="{% static 'css/staffdash.css' %}" rel="stylesheet">
+  <!-- Leaflet (no API key needed) -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">STAFF PANEL</div>
+      <nav class="nav">
+        <a class="active" href="{% url 'staff_dashboard' %}">📊 Dashboard</a>
+         <a href="{% url 'profile' %}" class="">
+          <span class="icon">👤</span><span>Profile</span>
+        </a>
+        <a href="{% url 'staff_add_vehicle' %}">+ Add Vehicle</a>
+        <a href="{% url 'vehicle_list' %}">🚗 Vehicles</a>
+        <a href="{% url 'logout' %}">🔓 Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <div>Vehicle Fleet — Staff</div>
+        <div>{{ request.user.username }}</div>
+      </div>
+
+      <section class="content">
+        <!-- Map / Tracking -->
+        <div class="card map-card" style="margin-bottom:16px">
+          <h3>Vehicle Tracking</h3>
+          <p class="muted small" style="margin-top:4px">Live locations; refreshes every 10 seconds. Click a marker for quick actions.</p>
+          <div id="map"></div>
+        </div>
+
+        <div class="grid">
+          <!-- Vehicles -->
+          <div class="card">
+            <h3 style="margin:0 0 8px">All Vehicles</h3>
+            <p class="muted" style="margin-top:0">Assign drivers and view current status.</p>
+            <div style="overflow:auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th><th>Reg. No</th><th>Make</th><th>Model</th><th>Year</th><th>Driver</th><th>Status</th><th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for v in vehicles %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ v.registration_no }}</td>
+                    <td>{{ v.make|default:"—" }}</td>
+                    <td>{{ v.model|default:"—" }}</td>
+                    <td>{{ v.year|default:"—" }}</td>
+                    <td>{% if v.current_driver %}{{ v.current_driver.username }}{% else %}<span class="muted">Not assigned</span>{% endif %}</td>
+                    <td>{{ v.get_status_display }}</td>
+                    <td>
+                      <a class="btn outline" href="{% url 'staff_assign_vehicle' v.pk %}">Assign</a>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="8" class="muted">No vehicles found.</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Logs -->
+          <div class="card">
+            <h3 style="margin:0 0 8px">Recent Activity</h3>
+            <p class="muted" style="margin-top:0">Maintenance & fuel updates (latest)</p>
+
+            <h4 style="margin:12px 0 6px">Maintenance</h4>
+            <table>
+              <thead><tr><th>Vehicle</th><th>Date</th><th>Next Due</th><th>By</th></tr></thead>
+              <tbody>
+                {% for m in maintenance|slice:":6" %}
+                  <tr>
+                    <td>{{ m.vehicle.registration_no }}</td>
+                    <td>{{ m.date }}</td>
+                    <td>{{ m.next_due|default:"—" }}</td>
+                    <td>{{ m.created_by.username|default:"—" }}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="4" class="muted">No maintenance logs.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <h4 style="margin:14px 0 6px">Fuel</h4>
+            <table>
+              <thead><tr><th>Vehicle</th><th>Date</th><th>Liters</th><th>Cost</th><th>Odometer</th><th>By</th></tr></thead>
+              <tbody>
+                {% for f in fuel_logs|slice:":6" %}
+                  <tr>
+                    <td>{{ f.vehicle.registration_no }}</td>
+                    <td>{{ f.date }}</td>
+                    <td>{{ f.liters }}</td>
+                    <td>{{ f.cost }}</td>
+                    <td>{{ f.odometer|default:"—" }}</td>
+                    <td>{{ f.created_by.username|default:"—" }}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="6" class="muted">No fuel logs.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Tracking map script (staff can read the same JSON feed) -->
+  <script>
+    (function(){
+      var map = L.map('map').setView([20.5937, 78.9629], 5); // India center
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      var markers = {}; // id -> marker
+
+      function upsertMarker(v) {
+        var id = String(v.id);
+        var html = `
+          <div>
+            <b>${v.reg}</b><br/>
+            ${v.make || ''} ${v.model || ''}<br/>
+            Status: <b>${v.status}</b><br/>
+            Driver: ${v.driver || '-'}<br/>
+            Updated: ${v.updated ? new Date(v.updated).toLocaleString() : '-'}<br/>
+            <div style="margin-top:6px;">
+              <a class="btn outline small" href="/staff/vehicles/${v.id}/assign/">Assign</a>
+            </div>
+          </div>
+        `;
+        if (markers[id]) {
+          markers[id].setLatLng([v.lat, v.lng]).bindPopup(html);
+        } else {
+          markers[id] = L.marker([v.lat, v.lng]).addTo(map).bindPopup(html);
+        }
+      }
+
+      function refresh() {
+        fetch("{% url 'vehicle_track_data' %}", {cache: "no-store"})
+          .then(r => {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+          })
+          .then(data => {
+            var seen = {};
+            (data.vehicles || []).forEach(v => {
+              upsertMarker(v);
+              seen[v.id] = true;
+            });
+            Object.keys(markers).forEach(id => {
+              if (!seen[id]) {
+                map.removeLayer(markers[id]);
+                delete markers[id];
+              }
+            });
+          })
+          .catch(err => console.error("Track fetch error:", err));
+      }
+
+      refresh();
+      setInterval(refresh, 10000);
+    })();
+  </script>
+</body>
+</html>

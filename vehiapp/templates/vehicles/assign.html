@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assign Driver / Status - {{ vehicle.registration_no }}</title>
+  <link href="{% static 'css/vehiassign.css' %}" rel="stylesheet">
+</head>
+<body>
+
+  <div class="top-bar">
+    <h1>Assign Driver / Status — {{ vehicle.registration_no }}</h1>
+    <a href="{% url 'vehicle_list' %}" class="btn secondary">← Back to Vehicles</a>
+  </div>
+
+  <div class="card">
+    {% if success %}
+      <div class="alert">✅ Vehicle updated successfully!</div>
+      <script>
+        setTimeout(()=>alert("Vehicle updated successfully!"), 100);
+      </script>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <div class="actions">
+        <button type="submit" class="btn">Save</button>
+        <a href="{% url 'vehicle_list' %}" class="btn secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

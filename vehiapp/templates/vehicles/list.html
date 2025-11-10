@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="{% static 'css/vehilist.css' %}" rel="stylesheet">
+  <title>Vehicle List - Fleet Management</title>
+</head>
+<body>
+
+  <div class="top-bar">
+    <h1 class="page-title">Vehicles</h1>
+    {% if request.user.profile.role == 'admin' %}
+      <a href="{% url 'admin_dashboard' %}" class="btn secondary">← Back to Dashboard</a>
+    {% elif request.user.profile.role == 'staff' %}
+      <a href="{% url 'staff_dashboard' %}" class="btn secondary">← Back to Dashboard</a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="filter-bar">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search reg/make/model" />
+    <select name="status">
+      <option value="">All status</option>
+      <option value="active" {% if status_active == 'active' %}selected{% endif %}>Active</option>
+      <option value="maintenance" {% if status_active == 'maintenance' %}selected{% endif %}>Maintenance</option>
+      <option value="inactive" {% if status_active == 'inactive' %}selected{% endif %}>Inactive</option>
+    </select>
+    <button type="submit">Filter</button>
+    <a href="{% url 'vehicle_list' %}">Reset</a>
+
+    {% if request.user.profile.role == 'admin' or request.user.profile.role == 'staff' or request.user.is_superuser %}
+      <a href="{% url 'add_vehicle' %}" style="margin-left:auto;" class="btn secondary">+ Add Vehicle</a>
+    {% endif %}
+  </form>
+
+  <div class="stats">
+    <div>Total: {{ stats.total }}</div>
+    <div>Assigned: {{ stats.assigned }}</div>
+    <div>Under Maintenance: {{ stats.maintenance }}</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Reg. No</th>
+        <th>Make / Model</th>
+        <th>Year</th>
+        <th>Status</th>
+        <th>Driver</th>
+        <th style="width:240px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in vehicles %}
+        <tr>
+          <td><a href="{% url 'vehicle_detail' v.id %}" class="action">{{ v.registration_no }}</a></td>
+          <td>{{ v.make }} {{ v.model }}</td>
+          <td>{{ v.year|default:"-" }}</td>
+          <td>{{ v.get_status_display }}</td>
+          <td>{{ v.current_driver.username|default:"-" }}</td>
+          <td>
+            <a href="{% url 'vehicle_detail' v.id %}" class="action">View</a>
+            {% if request.user.profile.role == 'admin' or request.user.profile.role == 'staff' or request.user.is_superuser %}
+              | <a href="{% url 'assign_vehicle' v.id %}" class="action">Assign</a>
+              | <a href="{% url 'edit_vehicle' v.id %}" class="action">Edit</a>
+              | <a href="{% url 'delete_vehicle' v.id %}" class="action" onclick="return confirm('Delete this vehicle?')">Delete</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6">No vehicles found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>

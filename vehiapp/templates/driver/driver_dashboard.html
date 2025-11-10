@@ -1,0 +1,208 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Driver Dashboard - Vehicle Fleet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="{% static 'css/driverdash.css' %}" rel="stylesheet">
+</head>
+<body>
+<div class="wrap">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">DRIVER PANEL</div>
+    <nav class="nav">
+      <a class="active" href="{% url 'driver_dashboard' %}">📍 Dashboard</a>
+       <a href="{% url 'profile' %}" class="">
+          <span class="icon">👤</span><span>Profile</span>
+        </a>
+      <a href="{% url 'logout' %}">🔓 Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div>Vehicle Fleet — Driver</div>
+      <div>{{ request.user.username }}</div>
+    </div>
+
+    <section class="content">
+
+      {% if messages %}
+        {% for m in messages %}
+          <div class="flash">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- Assigned Vehicles -->
+      <div class="card" style="margin-bottom:16px">
+        <h3 style="margin:0 0 6px">My Assigned Vehicles</h3>
+        <p class="muted" style="margin-top:0">These are the vehicles currently assigned to you.</p>
+        <div style="overflow:auto">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Reg. No</th><th>Make</th><th>Model</th><th>Year</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              {% for v in vehicles %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ v.registration_no }}</td>
+                  <td>{{ v.make|default:"—" }}</td>
+                  <td>{{ v.model|default:"—" }}</td>
+                  <td>{{ v.year|default:"—" }}</td>
+                  <td>{{ v.get_status_display }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="6" class="muted">No vehicle assigned yet. Please contact admin/staff.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- Add Maintenance -->
+        <div class="card">
+          <h3 style="margin:0 0 6px">Add Maintenance</h3>
+          <p class="muted" style="margin-top:0">Log a maintenance activity for one of your assigned vehicles.</p>
+
+          {% if vehicles|length == 0 %}
+            <p class="muted">You cannot add maintenance because no vehicle is assigned.</p>
+          {% else %}
+            <form method="post" style="display:grid;gap:10px">
+              {% csrf_token %}
+              <!-- Show form field errors (if any) -->
+              {% if mform.non_field_errors %}
+                <ul class="errorlist">{{ mform.non_field_errors }}</ul>
+              {% endif %}
+
+              <label>Vehicle</label>
+              {{ mform.vehicle }}
+              {{ mform.vehicle.errors }}
+
+              <label>Description</label>
+              {{ mform.description }}
+              {{ mform.description.errors }}
+
+              <div class="row">
+                <div>
+                  <label>Date</label>
+                  {{ mform.date }}
+                  {{ mform.date.errors }}
+                </div>
+                <div>
+                  <label>Next Due (optional)</label>
+                  {{ mform.next_due }}
+                  {{ mform.next_due.errors }}
+                </div>
+              </div>
+
+              <button class="btn" type="submit" name="maintenance_submit" value="1">Save Maintenance</button>
+            </form>
+          {% endif %}
+        </div>
+
+        <!-- Add Fuel -->
+        <div class="card">
+          <h3 style="margin:0 0 6px">Add Fuel</h3>
+          <p class="muted" style="margin-top:0">Log a fuel fill for one of your assigned vehicles.</p>
+
+          {% if vehicles|length == 0 %}
+            <p class="muted">You cannot add fuel because no vehicle is assigned.</p>
+          {% else %}
+            <form method="post" style="display:grid;gap:10px">
+              {% csrf_token %}
+              {% if fform.non_field_errors %}
+                <ul class="errorlist">{{ fform.non_field_errors }}</ul>
+              {% endif %}
+
+              <label>Vehicle</label>
+              {{ fform.vehicle }}
+              {{ fform.vehicle.errors }}
+
+              <div class="row">
+                <div>
+                  <label>Date</label>
+                  {{ fform.date }}
+                  {{ fform.date.errors }}
+                </div>
+                <div>
+                  <label>Liters</label>
+                  {{ fform.liters }}
+                  {{ fform.liters.errors }}
+                </div>
+              </div>
+
+              <div class="row">
+                <div>
+                  <label>Cost</label>
+                  {{ fform.cost }}
+                  {{ fform.cost.errors }}
+                </div>
+                <div>
+                  <label>Odometer (optional)</label>
+                  {{ fform.odometer }}
+                  {{ fform.odometer.errors }}
+                </div>
+              </div>
+
+              <button class="btn" type="submit" name="fuel_submit" value="1">Save Fuel</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Recent Logs (yours) -->
+      <div class="grid" style="margin-top:16px">
+        <div class="card">
+          <h3 style="margin:0 0 8px">My Recent Maintenance</h3>
+          <div style="overflow:auto">
+            <table>
+              <thead><tr><th>Date</th><th>Vehicle</th><th>Description</th><th>Next Due</th></tr></thead>
+              <tbody>
+                {% for m in maintenance %}
+                  <tr>
+                    <td>{{ m.date }}</td>
+                    <td>{{ m.vehicle.registration_no }}</td>
+                    <td>{{ m.description }}</td>
+                    <td>{{ m.next_due|default:"—" }}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="4" class="muted">No maintenance logs yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin:0 0 8px">My Recent Fuel</h3>
+          <div style="overflow:auto">
+            <table>
+              <thead><tr><th>Date</th><th>Vehicle</th><th>Liters</th><th>Cost</th><th>Odometer</th></tr></thead>
+              <tbody>
+                {% for f in fuel_logs %}
+                  <tr>
+                    <td>{{ f.date }}</td>
+                    <td>{{ f.vehicle.registration_no }}</td>
+                    <td>{{ f.liters }}</td>
+                    <td>{{ f.cost }}</td>
+                    <td>{{ f.odometer|default:"—" }}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="5" class="muted">No fuel logs yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+</body>
+</html>

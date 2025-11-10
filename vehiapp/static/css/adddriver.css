@@ -1,0 +1,12 @@
+ body{margin:0;font-family:Inter,system-ui,Arial;background:#f3f4f6;color:#111}
+    .wrap{max-width:980px;margin:28px auto;padding:0 16px}
+    h2{margin:0 0 14px}
+    .form-card{background:#fff;border:1px solid #e9e9e9;border-radius:10px;padding:20px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .full{grid-column:1/-1}
+    label{display:block;font-weight:600;margin:6px 0 6px}
+    input{width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:8px}
+    .actions{margin-top:14px;display:flex;gap:10px}
+    .btn{background:#07c57f;color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#fff;color:#07c57f;border:1px solid #07c57f;text-decoration:none;display:inline-block}
+    .alert{background:#fff3cd;border:1px solid #ffeeba;color:#856404;padding:10px;border-radius:8px;margin-bottom:10px}

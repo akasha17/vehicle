@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Vehicle - Fleet Management</title>
+  <link href="{% static 'css/vehiadd.css' %}" rel="stylesheet">
+</head>
+<body>
+
+  <div class="top-bar">
+    <h1>Add Vehicle</h1>
+    <a href="{% url 'admin_dashboard' %}" class="btn secondary">← Back to Dashboard</a>
+  </div>
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+
+      <label>Registration No:</label>
+      {{ form.registration_no }}
+
+      <label>Make:</label>
+      {{ form.make }}
+
+      <label>Model:</label>
+      {{ form.model }}
+
+      <label>Year:</label>
+      {{ form.year }}
+
+      <label>Status:</label>
+      {{ form.status }}
+
+      <label>Assign Driver:</label>
+      {{ form.current_driver }}
+
+      <label>Location (Place Name):</label>
+      {{ form.place_name }}
+
+      <div class="actions">
+        <button type="submit" class="btn">Save Vehicle</button>
+        <a href="{% url 'admin_dashboard' %}" class="btn secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

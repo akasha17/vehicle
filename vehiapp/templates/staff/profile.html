@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Vehicle Fleet</title>
+  <link href="{% static 'css/staffprofile.css' %}" rel="stylesheet">
+</head>
+<body>
+
+  <div class="profile-card">
+    <h2>My Profile</h2>
+
+    <p><strong>Username:</strong> {{ user_obj.username }}</p>
+    <p><strong>Email:</strong> {{ user_obj.email|default:"—" }}</p>
+    <p><strong>Role:</strong> {{ profile.role|default:"—" }}</p>
+
+    <div class="footer">
+      <a href="{% url 'staff_dashboard' %}" class="btn-back">← Back to Dashboard</a>
+    </div>
+  </div>
+
+</body>
+</html>
